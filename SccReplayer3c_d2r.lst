@@ -1,0 +1,1295 @@
+Sjasm Z80 Assembler v0.42c - www.xl2s.tk             [2017.02.05 - 09:48:27]
+
+SccReplayer3c_d2r.asm
+Errors: 0
+
+       1   00:0000                      ;----------------------------------------------------------------------------
+       2   00:0000                      	output "dsks\loader60.bin"
+       3   00:4000                      
+       4   00:4000  (00:F348)           slotvar:	equ 0xF348
+       5   00:4000                      	
+       6   00:4000                      loader60:
+       7   00:4000                      		org 0xD000 - 7
+       8   00:CFF9  FE                  		db 0xfe
+       9   00:CFFA  00 D0               		dw .start
+      10   00:CFFC  12 D0               		dw .end-1
+      11   00:CFFE  00 D0               		dw .start
+      12   00:D000                      .start:  	
+      13   00:D000  F3                  		di 
+      14   00:D001  DB A8               		in	a,(0xA8)	; Leemos el registro principal de slots
+      15   00:D003  F5                  		push	af		; save it
+      16   00:D004                      		
+      17   00:D004  26 40               		ld 		h,0x40
+      18   00:D006  3A 48 F3            		ld 		a,(slotvar)	;dskrom slot address
+      19   00:D009  CD 24 00            		call 	0x24			
+      20   00:D00C                      		
+      21   00:D00C  CD B5 77            		call 	START60H
+      22   00:D00F                      		
+      23   00:D00F  F1                  		pop		af
+      24   00:D010  D3 A8               		out (0xA8),a
+      25   00:D012  C9                  		ret
+      26   00:D013                      .end:
+      27   00:D013                      
+      28   00:D013                      	output "dsks\loader50.bin"
+      29   00:4000                      	
+      30   00:4000                      loader50:
+      31   00:4000                      		org 0xD000 - 7
+      32   00:CFF9  FE                  		db 0xfe
+      33   00:CFFA  00 D0               		dw .start
+      34   00:CFFC  12 D0               		dw .end-1
+      35   00:CFFE  00 D0               		dw .start
+      36   00:D000                      .start:  	
+      37   00:D000  F3                  		di 
+      38   00:D001  DB A8               		in	a,(0xA8)	; Leemos el registro principal de slots
+      39   00:D003  F5                  		push	af		; save it
+      40   00:D004                      		
+      41   00:D004  26 40               		ld 		h,0x40
+      42   00:D006  3A 48 F3            		ld 		a,(slotvar)	;dskrom slot address
+      43   00:D009  CD 24 00            		call 	0x24			
+      44   00:D00C                      		
+      45   00:D00C  CD BA 77            		call 	START50H
+      46   00:D00F                      
+      47   00:D00F  F1                  		pop		af
+      48   00:D010  D3 A8               		out (0xA8),a
+      49   00:D012  C9                  		ret
+      50   00:D013                      .end:
+      51   00:D013                      
+      52   00:D013                      
+      53   00:D013                      ;----------------------------------------------------------------------------
+      54   00:D013                              output "sccplay3c_d2r.rom"
+      55   00:0000                      
+      56   00:0000                      		org 	4000h
+      57   00:4000                      		CODE @ 	4000h
+      58   00:4000                      
+      59   00:4000                      
+      60   00:4000  (62861)             		incbin "dsks\test.rom"
+      61   00!6861                      		
+      62   00!6861                              org 	77b5h
+      63   00:77B5                      		CODE ! 	77b5h
+      64   00:77B5                      
+      65   00:77B5                      ; ascii-8 mapper
+      66   00:77B5                      
+      67   00:77B5                      ; Bank1:  equ      6000h		;	Bank 1: 6000h - 67FFh (6000h used)
+      68   00:77B5                      ; Bank2:  equ      6800h		;	Bank 2: 6800h - 6FFFh (6800h used)
+      69   00:77B5                      ; Bank3:  equ      7000h		;	Bank 3: 7000h - 77FFh (7000h used)
+      70   00:77B5                      ; Bank4:  equ      7800h		;	Bank 4: 7800h - 7FFFh (7800h used)
+      71   00:77B5                      
+      72   00:77B5                      ; konami 5 mapper
+      73   00:77B5                      
+      74   00:77B5                      	; Bank 1: 5000h - 57FFh (5000h used)
+      75   00:77B5                      	; Bank 2: 7000h - 77FFh (7000h used)
+      76   00:77B5                      	; Bank 3: 9000h - 97FFh (9000h used)
+      77   00:77B5                      	; Bank 4: B000h - B7FFh (B000h used)
+      78   00:77B5                      	
+      79   00:77B5  (00:5000)           Bank1:  equ      05000h		
+      80   00:77B5  (00:7000)           Bank2:  equ      07000h		
+      81   00:77B5  (00:9000)           Bank3:  equ      09000h		
+      82   00:77B5  (00:B000)           Bank4:  equ      0B000h		
+      83   00:77B5                      	
+      84   00:77B5                      ; scc mapper for scc chip
+      85   00:77B5                      
+      86   00:77B5  (00:9000)           sccBank3:  equ      09000h
+      87   00:77B5                      
+      88   00:77B5                      
+      89   00:77B5                      ;-------------------------------------
+      90   00:77B5                      ; Entry point
+      91   00:77B5                      ;-------------------------------------
+      92   00:77B5  (00:08BC)           Period50: equ       (3579545/32/50-1)
+      93   00:77B5  (00:0749)           Period60: equ       (3579545/32*1001/(60*1000)-1)
+      94   00:77B5                      
+      95   00:77B5                      
+      96   00:77B5                      START60H:
+      97   00:77B5  CD F0 77            		call START
+      98   00:77B8  18 1F               		jr	1f
+      99   00:77BA                      START50H:
+     100   00:77BA  CD F0 77            		call	START
+     101   00:77BD  3A 0E FD            		ld      a,(SCC)		
+     102   00:77C0  3C                  		inc		a
+     103   00:77C1  28 16               		jr		z,1f		; no scc no party
+     104   00:77C3                      		
+     105   00:77C3  F3                  		di
+     106   00:77C4  CD CC 7A            		call	en_scc
+     107   00:77C7                      
+     108   00:77C7  21 BC 08            		ld      hl,Period50
+     109   00:77CA  22 13 FD            		ld      (Period),hl
+     110   00:77CD                      
+     111   00:77CD  CD 8C 7A                    call    SccInit
+     112   00:77D0                      		
+     113   00:77D0  CD E8 7A            		call	en_slot
+     114   00:77D3                      
+     115   00:77D3  21 FF 79                    ld      hl,ReplayerUpdate50H
+     116   00:77D6  22 9C FD                    ld      ($FD9C),hl
+     117   00:77D9                      1:
+     118   00:77D9  3A 0E FD            		ld      a,(SCC)		
+     119   00:77DC  3C                  		inc		a
+     120   00:77DD  CC 6B 7B            		call	z,ayFX_SETUP		; no scc no party
+     121   00:77E0                      
+     122   00:77E0  1E 07               		ld	e,7
+     123   00:77E2  CD 49 78            		call checkkbd	
+     124   00:77E5  E6 04               		and	4				; ESC
+     125   00:77E7  C0                  		ret	nz
+     126   00:77E8                      
+     127   00:77E8  3E 3B               		ld	a, easter_egg/02000h-2
+     128   00:77EA  32 00 50            		ld 		(Bank1),a
+     129   00:77ED  C3 05 48            		jp	04000h + (easter_egg & 01FFFH) 
+     130   00:77F0                      
+     131   00:77F0                      		
+     132   00:77F0                      START:
+     133   00:77F0  AF                  		xor		a
+     134   00:77F1  32 00 50            		ld 		(Bank1),a
+     135   00:77F4  3C                  		inc		a
+     136   00:77F5  32 00 70            		ld 		(Bank2),a
+     137   00:77F8                      
+     138   00:77F8  F3                          di
+     139   00:77F9  CD B9 7A                    call    SCCsearch
+     140   00:77FC  3C                  		inc		a
+     141   00:77FD  C8                  		ret		z			; no scc no party
+     142   00:77FE                      
+     143   00:77FE  F3                  		di
+     144   00:77FF  CD CC 7A            		call	en_scc
+     145   00:7802                      
+     146   00:7802  21 49 07            		ld      hl,Period60
+     147   00:7805  22 13 FD            		ld      (Period),hl
+     148   00:7808                      		
+     149   00:7808  3E 3F                       ld      a,3Fh
+     150   00:780A  32 00 90                    ld      (sccBank3),a
+     151   00:780D                      
+     152   00:780D  CD 8C 7A                    call    SccInit
+     153   00:7810  CD F7 79                    call    ReplayerMute
+     154   00:7813                      		
+     155   00:7813  CD E8 7A            		call	en_slot
+     156   00:7816                      
+     157   00:7816                      
+     158   00:7816                      	; 	set the USR0() function 
+     159   00:7816  21 09 FD            		ld		hl,USR0
+     160   00:7819  22 9A F3            		ld		(0xF39A),hl
+     161   00:781C                      
+     162   00:781C  3E F7                       ld      a,0xF7
+     163   00:781E  32 09 FD                    ld      (USR0+0),a
+     164   00:7821  3A 48 F3            		ld		a,(slotvar)
+     165   00:7824  32 0A FD            		ld		(USR0+1),a
+     166   00:7827  21 5E 78                    ld      hl,ReplayerInit
+     167   00:782A  22 0B FD                    ld      (USR0+2),hl
+     168   00:782D  3E C9                       ld      a,0xC9
+     169   00:782F  32 0D FD                    ld      (USR0+4),a
+     170   00:7832                      	
+     171   00:7832                      	; 	set the ISR routine	
+     172   00:7832  3E F7               		ld      a,0xF7
+     173   00:7834  32 9A FD                    ld      ($FD9A),a
+     174   00:7837  3A 48 F3            		ld		a,(slotvar)
+     175   00:783A  32 9B FD            		ld		($FD9B),a
+     176   00:783D  21 B9 78                    ld      hl,ReplayerUpdate60H
+     177   00:7840  22 9C FD                    ld      ($FD9C),hl
+     178   00:7843  3E C9                       ld      a,0xC9
+     179   00:7845  32 9E FD                    ld      ($FD9E),a
+     180   00:7848  C9                  		ret
+     181   00:7849                      		
+     182   00:7849                      ;-------------------------------------
+     183   00:7849                      ; checkkbd: ckeck keyboard line
+     184   00:7849                      ; syntax:checkkbd <keyboar line #>
+     185   00:7849                      ; in:  e
+     186   00:7849                      ; out: l
+     187   00:7849                      ;-------------------------------------
+     188   00:7849                      ; i8255 ports
+     189   00:7849                      ;
+     190   00:7849  (00:00A8)           i8255porta  equ 0a8h        ; slot selection
+     191   00:7849  (00:00A9)           i8255portb  equ 0a9h        ; keyboard column input
+     192   00:7849  (00:00AA)           i8255portc  equ 0aah        ; leds, motor, cassette, kbd line
+     193   00:7849  (00:00AB)           i8255portd  equ 0abh        ; mode select for i8255 ports A,B,C
+     194   00:7849                      
+     195   00:7849                      checkkbd:
+     196   00:7849  DB AA                       in  a,(i8255portc)
+     197   00:784B  E6 F0                       and 011110000B          ; upper 4 bits contain info to preserve
+     198   00:784D  B3                          or  e
+     199   00:784E  D3 AA                       out (i8255portc),a
+     200   00:7850  DB A9                       in  a,(i8255portb)
+     201   00:7852  6F                          ld  l,a
+     202   00:7853  C9                          ret		
+     203   00:7854                      
+     204   00:7854                      ;-------------------------------------
+     205   00:7854                      ; Initialize replayer
+     206   00:7854                      ;
+     207   00:7854                      ; in :
+     208   00:7854                      ; l  # of Sfx
+     209   00:7854                      ;
+     210   00:7854                      ;-------------------------------------
+     211   00:7854                      ReplayerInit_2:
+     212   00:7854  AF                  		xor		a
+     213   00:7855  32 00 50            		ld 		(Bank1),a
+     214   00:7858  CD 67 78            		call	2f
+     215   00:785B  FB                  		ei
+     216   00:785C  18 FE               1:		jr		1B
+     217   00:785E                      
+     218   00:785E                      ReplayerInit:
+     219   00:785E  3A 63 F6            		ld		a,(0xF663)			; argument type passed to USR()
+     220   00:7861  FE 02               		cp		2
+     221   00:7863  C0                  		ret		nz					; not an integer
+     222   00:7864                      		
+     223   00:7864  2A F8 F7            		ld		hl,(0xF7F8)			; sfx num. in L
+     224   00:7867                      2:
+     225   00:7867  26 00                       ld      h,0
+     226   00:7869                      
+     227   00:7869  54                          ld      d,h
+     228   00:786A  5D                          ld      e,l
+     229   00:786B                      
+     230   00:786B  29                          add     hl,hl
+     231   00:786C  29                          add     hl,hl
+     232   00:786D  19                          add     hl,de
+     233   00:786E                      
+     234   00:786E  11 8C 78                    ld      de,SfxTable
+     235   00:7871  19                          add     hl,de
+     236   00:7872                      
+     237   00:7872  5E                          ld      e,(hl)
+     238   00:7873  23                          inc     hl
+     239   00:7874  56                          ld      d,(hl)
+     240   00:7875  23                          inc     hl
+     241   00:7876  ED 53 11 FD                 ld      (SamplePos),de
+     242   00:787A                      
+     243   00:787A  7E                          ld		a,(hl)
+     244   00:787B  23                          inc     hl
+     245   00:787C  32 17 FD                    ld      (SamplePage),a
+     246   00:787F                      
+     247   00:787F  5E                          ld      e,(hl)
+     248   00:7880  23                          inc     hl
+     249   00:7881  56                          ld      d,(hl)
+     250   00:7882  ED 53 15 FD                 ld      (NumBlocksToPlay),de
+     251   00:7886                      
+     252   00:7886  3E FF                       ld      a,0FFh
+     253   00:7888  32 10 FD                    ld      (SccSfxOn),a
+     254   00:788B                      
+     255   00:788B  C9                          ret
+     256   00:788C                      
+     257   00:788C                      SfxTable:
+     258   00:788C                               include SfxTable4.asm
+       1.  00:788C  (00:0009)           nwavs:       equ  9
+       2.  00:788C                      
+       3.  00:788C  00 40                        dw     04000h + (s0_START & 01FFFH)
+       4.  00:788E  32                           db     s0_START/02000h-2
+       5.  00:788F  64 00                        dw     (s0_END - s0_START+95)/96
+       6.  00:7891                          
+       7.  00:7891  80 45                        dw     04000h + (s1_START & 01FFFH)
+       8.  00:7893  33                           db     s1_START/02000h-2
+       9.  00:7894  50 00                        dw     (s1_END - s1_START+95)/96
+      10.  00:7896                          
+      11.  00:7896  80 43                        dw     04000h + (s2_START & 01FFFH)
+      12.  00:7898  34                           db     s2_START/02000h-2
+      13.  00:7899  09 00                        dw     (s2_END - s2_START+95)/96
+      14.  00:789B                          
+      15.  00:789B  E0 46                        dw     04000h + (s3_START & 01FFFH)
+      16.  00:789D  34                           db     s3_START/02000h-2
+      17.  00:789E  60 00                        dw     (s3_END - s3_START+95)/96
+      18.  00:78A0                          
+      19.  00:78A0  E0 4A                        dw     04000h + (s4_START & 01FFFH)
+      20.  00:78A2  35                           db     s4_START/02000h-2
+      21.  00:78A3  03 00                        dw     (s4_END - s4_START+95)/96
+      22.  00:78A5                          
+      23.  00:78A5  00 4C                        dw     04000h + (s5_START & 01FFFH)
+      24.  00:78A7  35                           db     s5_START/02000h-2
+      25.  00:78A8  0F 00                        dw     (s5_END - s5_START+95)/96
+      26.  00:78AA                          
+      27.  00:78AA  A0 51                        dw     04000h + (s6_START & 01FFFH)
+      28.  00:78AC  35                           db     s6_START/02000h-2
+      29.  00:78AD  3F 00                        dw     (s6_END - s6_START+95)/96
+      30.  00:78AF                          
+      31.  00:78AF  40 49                        dw     04000h + (s7_START & 01FFFH)
+      32.  00:78B1  36                           db     s7_START/02000h-2
+      33.  00:78B2  89 00                        dw     (s7_END - s7_START+95)/96
+      34.  00:78B4                          
+      35.  00:78B4  A0 5C                        dw     04000h + (s8_START & 01FFFH)
+      36.  00:78B6  37                           db     s8_START/02000h-2
+      37.  00:78B7  1E 01                        dw     (s8_END - s8_START+95)/96
+      38.  00:78B9                          
+     259   00:78B9                      		 
+     260   00:78B9                      ReplayerUpdate60H:
+     261   00:78B9  3A 10 FD            		ld      a,(SccSfxOn)		; play one sfx at time
+     262   00:78BC  B7                          or      a
+     263   00:78BD  C8                  		ret		z
+     264   00:78BE                      
+     265   00:78BE  DB A8               		in		a,(0xA8)	
+     266   00:78C0  08                  		ex		af,af'
+     267   00:78C1                      
+     268   00:78C1  3A 0E FD            		ld	a,[SCC]
+     269   00:78C4  26 80               		ld h,#80
+     270   00:78C6  CD 24 00            		call enaslt       ; switch scc slot in 8000-bfffh
+     271   00:78C9                      		
+     272   00:78C9                      		; ld		a,(sccslots)
+     273   00:78C9                      		; out 	(0xA8),a		
+     274   00:78C9                      		; ld		a,(sccsubslots)
+     275   00:78C9                      		; ld 		(0xFFFF),a		
+     276   00:78C9  CD D4 78            		call	SccReplayerUpdate
+     277   00:78CC  AF                  		xor		a
+     278   00:78CD  32 00 50            		ld 		(Bank1),a
+     279   00:78D0  08                  		ex		af,af'
+     280   00:78D1  D3 A8               		out 	(0xA8),a		
+     281   00:78D3  C9                  		ret
+     282   00:78D4                      
+     283   00:78D4                      ;-------------------------------------
+     284   00:78D4                      ; write 32 samples and moves sample pointer to next page
+     285   00:78D4                      ; NTSC version == 622 cycles 
+     286   00:78D4                      ;-------------------------------------
+     287   00:78D4                      
+     288   00:78D4                      		macro	my_ldir
+     289   00:78D4                    <         repeat  32
+     290   00:78D4                    <         ldi						; 18*32
+     291   00:78D4                    <         endrepeat
+     292   00:78D4                    < 
+     293   00:78D4                    <         ld     	a,h				; 5
+     294   00:78D4                    < 		cp		60h				; 8
+     295   00:78D4                    <         jp 		nz,1f			; 11
+     296   00:78D4                    < 		
+     297   00:78D4                    <         ld      a,(SamplePage)
+     298   00:78D4                    <         inc     a
+     299   00:78D4                    <         ld      (SamplePage),a
+     300   00:78D4                    <         ld      (Bank1),a
+     301   00:78D4                    <         ld		h,40h
+     302   00:78D4                    < 1:      
+     303   00:78D4                    < 		endm
+     304   00:78D4                      		
+     305   00:78D4                      		
+     306   00:78D4                      				
+     307   00:78D4                      SccReplayerUpdate:
+     308   00:78D4  3A 17 FD                    ld      a,(SamplePage)
+     309   00:78D7  32 00 50                    ld      (Bank1),a
+     310   00:78DA                      
+     311   00:78DA  2A 11 FD                    ld      hl,(SamplePos)
+     312   00:78DD  11 00 98                    ld      de,9800h
+     313   00:78E0                      
+     314   00:78E0                              ;622 cycles except at bank swap
+     315   00:78E0                      
+     316   00:78E0                              ; phase 0
+     317   00:78E0                              my_ldir
+     317   00:78E0                    >         repeat  32
+     317   00:78E0                    <         ldi
+     317   00:78E0                    <         endrepeat
+     317   00:78E0  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     317   00:78F0  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     317   00:7900  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     317   00:7910  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     317   00:7920                    > 
+     317   00:7920  7C                >         ld      a,h
+     317   00:7921  FE 60             >   cp  60h
+     317   00:7923  C2 32 79          >         jp   nz,1f
+     317   00:7926                    >   
+     317   00:7926  3A 17 FD          >         ld      a,(SamplePage)
+     317   00:7929  3C                >         inc     a
+     317   00:792A  32 17 FD          >         ld      (SamplePage),a
+     317   00:792D  32 00 50          >         ld      (Bank1),a
+     317   00:7930  26 40             >         ld  h,40h
+     317   00:7932                    > 1:
+     318   00:7932  3E 49               		ld      a,Period60 & 255	; 8
+     319   00:7934  32 80 98                    ld      (9880h),a       	; 14
+     320   00:7937                      		
+     321   00:7937                              ; phase 1
+     322   00:7937                              my_ldir
+     322   00:7937                    >         repeat  32
+     322   00:7937                    <         ldi
+     322   00:7937                    <         endrepeat
+     322   00:7937  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     322   00:7947  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     322   00:7957  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     322   00:7967  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     322   00:7977                    > 
+     322   00:7977  7C                >         ld      a,h
+     322   00:7978  FE 60             >   cp  60h
+     322   00:797A  C2 89 79          >         jp   nz,1f
+     322   00:797D                    >   
+     322   00:797D  3A 17 FD          >         ld      a,(SamplePage)
+     322   00:7980  3C                >         inc     a
+     322   00:7981  32 17 FD          >         ld      (SamplePage),a
+     322   00:7984  32 00 50          >         ld      (Bank1),a
+     322   00:7987  26 40             >         ld  h,40h
+     322   00:7989                    > 1:
+     323   00:7989  3E 49               		ld      a,Period60 & 255
+     324   00:798B  32 82 98                    ld      (9882h),a			
+     325   00:798E                      		
+     326   00:798E                              ; phase 2
+     327   00:798E                              my_ldir
+     327   00:798E                    >         repeat  32
+     327   00:798E                    <         ldi
+     327   00:798E                    <         endrepeat
+     327   00:798E  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     327   00:799E  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     327   00:79AE  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     327   00:79BE  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     327   00:79CE                    > 
+     327   00:79CE  7C                >         ld      a,h
+     327   00:79CF  FE 60             >   cp  60h
+     327   00:79D1  C2 E0 79          >         jp   nz,1f
+     327   00:79D4                    >   
+     327   00:79D4  3A 17 FD          >         ld      a,(SamplePage)
+     327   00:79D7  3C                >         inc     a
+     327   00:79D8  32 17 FD          >         ld      (SamplePage),a
+     327   00:79DB  32 00 50          >         ld      (Bank1),a
+     327   00:79DE  26 40             >         ld  h,40h
+     327   00:79E0                    > 1:
+     328   00:79E0  3E 49               		ld      a,Period60 & 255
+     329   00:79E2  32 84 98                    ld      (9884h),a		
+     330   00:79E5                      
+     331   00:79E5  22 11 FD                    ld      (SamplePos),hl
+     332   00:79E8                      
+     333   00:79E8  3E 07               		ld      a,00000111b     ; channels 1-3 active
+     334   00:79EA  32 8F 98                    ld      (988Fh),a
+     335   00:79ED  2A 15 FD                    ld      hl,(NumBlocksToPlay)
+     336   00:79F0  2B                          dec     hl                       ; does NOT affect Z flag
+     337   00:79F1  22 15 FD                    ld      (NumBlocksToPlay),hl
+     338   00:79F4                      
+     339   00:79F4  7C                          ld      a,h
+     340   00:79F5  B5                          or      l
+     341   00:79F6  C0                  		ret		nz
+     342   00:79F7                      
+     343   00:79F7                      ;-------------------------------------
+     344   00:79F7                      ; Mute replayer
+     345   00:79F7                      ;-------------------------------------
+     346   00:79F7                      ReplayerMute:
+     347   00:79F7                      
+     348   00:79F7  AF                          xor      a
+     349   00:79F8  32 10 FD                    ld      (SccSfxOn),a
+     350   00:79FB  32 8F 98                    ld      (988Fh),a	; all channels inactive
+     351   00:79FE  C9                          ret
+     352   00:79FF                      
+     353   00:79FF                      ;-------------------------------------
+     354   00:79FF                      ; write 32 samples and moves sample pointer to next page
+     355   00:79FF                      ; PAL version == 746 cycles 
+     356   00:79FF                      ;-------------------------------------
+     357   00:79FF                      ReplayerUpdate50H
+     358   00:79FF  3A 10 FD            		ld      a,(SccSfxOn)		; play one sfx at time
+     359   00:7A02  B7                          or      a
+     360   00:7A03  C8                  		ret		z
+     361   00:7A04                      
+     362   00:7A04  DB A8               		in		a,(0xA8)	
+     363   00:7A06  08                  		ex		af,af'
+     364   00:7A07                      
+     365   00:7A07  3A 0E FD            		ld	a,[SCC]
+     366   00:7A0A  26 80               		ld h,#80
+     367   00:7A0C  CD 24 00            		call enaslt       ; switch scc slot in 8000-bfffh
+     368   00:7A0F                      
+     369   00:7A0F                      		; ld		a,(sccslots)
+     370   00:7A0F                      		; out 	(0xA8),a		
+     371   00:7A0F                      		; ld		a,(sccsubslots)
+     372   00:7A0F                      		; ld 		(0xFFFF),a		
+     373   00:7A0F  CD 1A 7A            		call	SccReplayerUpdate50H
+     374   00:7A12  AF                  		xor		a
+     375   00:7A13  32 00 50            		ld 		(Bank1),a
+     376   00:7A16  08                  		ex		af,af'
+     377   00:7A17  D3 A8               		out 	(0xA8),a		
+     378   00:7A19  C9                  		ret
+     379   00:7A1A                      		
+     380   00:7A1A                      SccReplayerUpdate50H:
+     381   00:7A1A  3A 17 FD                    ld      a,(SamplePage)
+     382   00:7A1D  32 00 50                    ld      (Bank1),a
+     383   00:7A20                      
+     384   00:7A20  2A 11 FD                    ld      hl,(SamplePos)
+     385   00:7A23  11 00 98                    ld      de,9800h
+     386   00:7A26                             
+     387   00:7A26                      	    ;746 cycles except at bank swap
+     388   00:7A26                              ; phase 0		
+     389   00:7A26  CD 58 7A            		call	my_ldir746			; 18
+     390   00:7A29  3E BC               		ld      a,Period50 & 255	; 8
+     391   00:7A2B  32 80 98                    ld      (9880h),a       	; 14
+     392   00:7A2E                      		
+     393   00:7A2E  CD 58 7A            		call	my_ldir746		
+     394   00:7A31  3E BC               		ld      a,Period50 & 255
+     395   00:7A33  32 82 98            		ld      (9882h),a       
+     396   00:7A36                      		
+     397   00:7A36  CD 58 7A            		call	my_ldir746		
+     398   00:7A39  3E BC               		ld      a,Period50 & 255
+     399   00:7A3B  32 84 98            		ld      (9884h),a      
+     400   00:7A3E                              
+     401   00:7A3E  22 11 FD            		ld      (SamplePos),hl
+     402   00:7A41                      
+     403   00:7A41  3E 07               		ld      a,00000111b     ; channels 1-3 active
+     404   00:7A43  32 8F 98                    ld      (988Fh),a
+     405   00:7A46  2A 15 FD                    ld      hl,(NumBlocksToPlay)
+     406   00:7A49  2B                          dec     hl                       ; does NOT affect Z flag
+     407   00:7A4A  22 15 FD                    ld      (NumBlocksToPlay),hl
+     408   00:7A4D                      
+     409   00:7A4D  7C                          ld      a,h
+     410   00:7A4E  B5                          or      l
+     411   00:7A4F  C0                  		ret		nz
+     412   00:7A50                      
+     413   00:7A50  AF                          xor      a
+     414   00:7A51  32 10 FD                    ld      (SccSfxOn),a
+     415   00:7A54  32 8F 98                    ld      (988Fh),a	; all channels inactive
+     416   00:7A57  C9                          ret
+     417   00:7A58                      
+     418   00:7A58                      		
+     419   00:7A58                      my_ldir746:						; 746, including call and instructions outside the routine
+     420   00:7A58  01 11 00            		ld	bc,17				; 11
+     421   00:7A5B  ED B0               		ldir					; 16*23+18
+     422   00:7A5D                      [15]    ldi						; 18
+     422   00:7A5D  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     422   00:7A6D  ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 ED A0 
+     423   00:7A7B                      		
+     424   00:7A7B  7C                  		ld     	a,h				; 5
+     425   00:7A7C  FE 60               		cp		60h				; 8
+     426   00:7A7E  3A 17 FD                    ld      a,(SamplePage)	; 14
+     427   00:7A81  C0                          ret		nz				; 12/6
+     428   00:7A82                      		
+     429   00:7A82  3C                          inc     a
+     430   00:7A83  32 17 FD                    ld      (SamplePage),a
+     431   00:7A86  32 00 50                    ld      (Bank1),a
+     432   00:7A89  26 40                       ld		h,40h
+     433   00:7A8B  C9                  		ret			
+     434   00:7A8C                      ;-------------------------------------
+     435   00:7A8C                      ; Initialize the scc
+     436   00:7A8C                      ;-------------------------------------
+     437   00:7A8C                      SccInit:
+     438   00:7A8C  2A 13 FD                    ld      hl,(Period)
+     439   00:7A8F  22 80 98                    ld      (9880h),hl
+     440   00:7A92  22 82 98                    ld      (9882h),hl
+     441   00:7A95  22 84 98                    ld      (9884h),hl
+     442   00:7A98                      
+     443   00:7A98                      
+     444   00:7A98  3E 20                       ld  	a,00100000b         ; Reset phase when freq is written
+     445   00:7A9A  32 E0 98                    ld  	(98E0h),a			; on SCC
+     446   00:7A9D  32 C0 98                    ld  	(98C0h),a			; cover SCC+ in SCC mode
+     447   00:7AA0                      
+     448   00:7AA0  3E 0F                       ld      a,15
+     449   00:7AA2  32 8A 98                    ld      (988Ah),a       ; volume ch1
+     450   00:7AA5  32 8B 98                    ld      (988Bh),a       ; volume ch2
+     451   00:7AA8  32 8C 98                    ld      (988Ch),a       ; volume ch3
+     452   00:7AAB                      
+     453   00:7AAB                      
+     454   00:7AAB                      SccMute:
+     455   00:7AAB  21 00 98                    ld      hl,9800h
+     456   00:7AAE  11 01 98                    ld      de,9801h
+     457   00:7AB1  01 7F 00                    ld      bc,32*4 -1
+     458   00:7AB4                      
+     459   00:7AB4  36 00                       ld      (hl),0
+     460   00:7AB6  ED B0                       ldir
+     461   00:7AB8  C9                          ret
+     462   00:7AB9                      
+     463   00:7AB9                      
+     464   00:7AB9                      ;-------------------------------------
+     465   00:7AB9                      ; SCC and Slot management
+     466   00:7AB9                      ;-------------------------------------
+     467   00:7AB9                      		include sccdetec.asm
+       1.  00:7AB9                      
+       2.  00:7AB9                       ; ====================
+       3.  00:7AB9                       ;    Initialization
+       4.  00:7AB9                       ; ====================
+       5.  00:7AB9                      SCCsearch
+       6.  00:7AB9  21 EE 7A             	ld	hl,begin
+       7.  00:7ABC  11 00 C0             	ld	de,0C000H
+       8.  00:7ABF  01 7E 00             	ld	bc,end-begin+1
+       9.  00:7AC2  ED B0                	ldir
+      10.  00:7AC4  CD 00 C0             	call	0C000H
+      11.  00:7AC7  78                   	ld	a,b
+      12.  00:7AC8  32 0E FD             	ld	(SCC),a
+      13.  00:7ACB  C9                   	ret
+      14.  00:7ACC                       
+      15.  00:7ACC                       ; SLOT            .db     0
+      16.  00:7ACC                       ; PAGE1RAM        .db     0
+      17.  00:7ACC                       ; RAMSLOT         .db     0
+      18.  00:7ACC                       
+      19.  00:7ACC                       ; SCC             .db     0
+      20.  00:7ACC                       ; SUB             .db     0FFH
+      21.  00:7ACC                       
+      22.  00:7ACC                       
+      23.  00:7ACC                      en_scc:
+      24.  00:7ACC  3A 0E FD            	ld	a,[SCC]
+      25.  00:7ACF  3C                  	inc	a
+      26.  00:7AD0  C8                  	ret	z			; no scc
+      27.  00:7AD1                      	; ld	a,(0xFFFF)
+      28.  00:7AD1                      	; cpl
+      29.  00:7AD1                      	; ld	(cursubslots),a
+      30.  00:7AD1  DB A8               	in	a,(0xA8)	; Leemos el registro principal de slots
+      31.  00:7AD3  32 0F FD            	ld	(curslot),a	; save it
+      32.  00:7AD6  5F                  	ld	e,a
+      33.  00:7AD7  3A 0E FD            	ld	a,(SCC)
+      34.  00:7ADA  E6 03               	and	0x03		; Nos fijamos en el slot primario
+      35.  00:7ADC  87 87 87 87         [4]	add	a,a
+      36.  00:7AE0  57                  	ld	d,a
+      37.  00:7AE1  7B                  	ld	a,e			; registro principal de slots
+      38.  00:7AE2  E6 CF               	and	11001111b
+      39.  00:7AE4  B2                  	or	d
+      40.  00:7AE5  D3 A8               	out (0xA8),a
+      41.  00:7AE7                      	; ld	(sccslots),a
+      42.  00:7AE7                      	; ld	a,(0xFFFF)
+      43.  00:7AE7                      	; cpl
+      44.  00:7AE7                      	; ld	(sccsubslots),a
+      45.  00:7AE7  C9                  	ret
+      46.  00:7AE8                      	
+      47.  00:7AE8                      en_slot:
+      48.  00:7AE8  3A 0F FD            	ld	a,(curslot)
+      49.  00:7AEB  D3 A8               	out (0xA8),a
+      50.  00:7AED                      	; ld	a,(cursubslots)
+      51.  00:7AED                      	; ld	(0xFFFF),a
+      52.  00:7AED  C9                  	ret
+      53.  00:7AEE                      
+      54.  00:7AEE                      
+      55.  00:7AEE                      ;------------------------------------------------------------
+      56.  00:7AEE                      ; SCC-search v1.0
+      57.  00:7AEE                      ; by Alwin Henseler
+      58.  00:7AEE                      ; using method described in bulletin # 18 MSX-club Enschede
+      59.  00:7AEE                      ; input: none
+      60.  00:7AEE                      ; output: B=slot that contains SCC (=255 if no SCC found)
+      61.  00:7AEE                      
+      62.  00:7AEE  (00:0024)           enaslt:          equ #0024
+      63.  00:7AEE  (00:FCC1)           exptbl:          equ #fcc1
+      64.  00:7AEE  (00:FCC5)           slttbl:          equ #fcc5
+      65.  00:7AEE                      
+      66.  00:7AEE                      begin:
+      67.  00:7AEE  (C000)              	MAP #c000
+      68.  00:7AEE  DB A8               	in a,(#a8)        ; read prim. slotregister
+      69.  00:7AF0  1F                  	rra
+      70.  00:7AF1  1F                  	rra
+      71.  00:7AF2  1F                  	rra
+      72.  00:7AF3  1F                  	rra
+      73.  00:7AF4  E6 03               	and %00000011     ; A = prim.slot page 2
+      74.  00:7AF6  06 00               	ld b,0
+      75.  00:7AF8  4F                  	ld c,a
+      76.  00:7AF9  21 C1 FC            	ld hl,exptbl
+      77.  00:7AFC  09                  	add hl,bc
+      78.  00:7AFD  CB 7E               	bit 7,(hl)        ; page 2-slot expanded ?
+      79.  00:7AFF  28 0C               	jr z,scctest
+      80.  00:7B01  21 C5 FC            	ld hl,slttbl
+      81.  00:7B04  09                  	add hl,bc
+      82.  00:7B05  7E                  	ld a,(hl)         ; A = sec.sel.reg. of page 2-slot
+      83.  00:7B06  1F                  	rra
+      84.  00:7B07  1F                  	rra
+      85.  00:7B08  E6 0C               	and %00001100     ; bit 1/2 = sec.slot page 2
+      86.  00:7B0A  B1                  	or c
+      87.  00:7B0B  CB FF               	set 7,a           ; compose sec.slot-code
+      88.  00:7B0D                      scctest:
+      89.  00:7B0D  F5                  	push af           ; save page 2-slot on the stack
+      90.  00:7B0E  3A C1 FC            	ld a,(exptbl)     ; 1st slot to test
+      91.  00:7B11                      
+      92.  00:7B11                      testslot:        
+      93.  00:7B11  F5                  	push af           ; save test-slot on the stack
+      94.  00:7B12  26 80               	ld h,#80
+      95.  00:7B14  CD 24 00            	call enaslt       ; switch slot-to-test in 8000-bfffh
+      96.  00:7B17  21 00 90            	ld hl,#9000
+      97.  00:7B1A  46                  	ld b,(hl)         ; save contents of address 9000h
+      98.  00:7B1B  36 3F               	ld (hl),#3f       ; activate SCC (if present)
+      99.  00:7B1D                      
+     100.  00:7B1D  AF                  	xor	a
+     101.  00:7B1E  32 FE BF            	ld (0xbffe),a	  ; scc+ patch for bluemsx
+     102.  00:7B21                      
+     103.  00:7B21  26 9C               	ld h,#9c          ; address of SCC-register mirrors
+     104.  00:7B23  11 00 98            	ld de,#9800       ; 9800h = address of SCC-registers
+     105.  00:7B26                      testreg:         
+     106.  00:7B26  1A                  	ld a,(de)
+     107.  00:7B27  4F                  	ld c,a            ; save contents of address 98xxh
+     108.  00:7B28  7E                  	ld a,(hl)         ; read byte from address 9cxxh
+     109.  00:7B29  2F                  	cpl               ; and invert it
+     110.  00:7B2A  12                  	ld (de),a         ; write inverted byte to 98xxh
+     111.  00:7B2B  BE                  	cp (hl)           ; same value on 9cxxh ?
+     112.  00:7B2C  79                  	ld a,c
+     113.  00:7B2D  12                  	ld (de),a         ; restore value on 98xxh
+     114.  00:7B2E  20 0D               	jr nz,nextslot    ; unequal -> no SCC -> continue search
+     115.  00:7B30  23                  	inc hl
+     116.  00:7B31  13                  	inc de            ; next test-addresses
+     117.  00:7B32  CB 7D               	bit 7,l           ; 128 addresses (registers) tested ?
+     118.  00:7B34  28 F0               	jr z,testreg      ; no -> repeat mirror-test
+     119.  00:7B36  78                  	ld a,b
+     120.  00:7B37  32 00 90            	ld (#9000),a      ; restore value on 9000h
+     121.  00:7B3A  C1                  	pop bc            ; retrieve slotcode (=SCC-slot) from stack
+     122.  00:7B3B  18 24               	jr done           ; SCC found, restore page 2-slot & return
+     123.  00:7B3D                      
+     124.  00:7B3D                      nextslot:
+     125.  00:7B3D  78                  	ld a,b
+     126.  00:7B3E  32 00 90            	ld (#9000),a      ; restore value on 9000h
+     127.  00:7B41  C1                  	pop bc            ; retrieve slotcode from stack
+     128.  00:7B42  CB 78               	bit 7,b           ; test-slot = sec.slot ?
+     129.  00:7B44  28 07               	jr z,nextprim
+     130.  00:7B46  78                  	ld a,b
+     131.  00:7B47  C6 04               	add a,4           ; increase sec.slotnumber
+     132.  00:7B49  CB 67               	bit 4,a           ; sec.slot = 4 ?
+     133.  00:7B4B  28 C4               	jr z,testslot
+     134.  00:7B4D                      nextprim:
+     135.  00:7B4D  78                  	ld a,b
+     136.  00:7B4E  E6 03               	and %00000011
+     137.  00:7B50  FE 03               	cp 3              ; prim.slot = 3 ?
+     138.  00:7B52  28 0B               	jr z,noscc
+     139.  00:7B54  3C                  	inc a             ; increase prim.slotnumber
+     140.  00:7B55  16 00               	ld d,0
+     141.  00:7B57  5F                  	ld e,a
+     142.  00:7B58  21 C1 FC            	ld hl,exptbl
+     143.  00:7B5B  19                  	add hl,de
+     144.  00:7B5C  B6                  	or (hl)           ; combine slot-expansion with slotcode
+     145.  00:7B5D  18 B2               	jr testslot
+     146.  00:7B5F                      
+     147.  00:7B5F                      noscc:           
+     148.  00:7B5F  06 FF               	ld b,255          ; code for no SCC
+     149.  00:7B61                      done:            
+     150.  00:7B61  F1                  	pop af            ; retrieve page 2-slot from stack
+     151.  00:7B62  C5                  	push bc
+     152.  00:7B63  26 80               	ld h,#80
+     153.  00:7B65  CD 24 00            	call enaslt       ; restore original page 2-slot
+     154.  00:7B68  C1                  	pop bc
+     155.  00:7B69  FB                  	ei
+     156.  00:7B6A  C9                  	ret
+     157.  00:7B6B                      end:
+     158.  00:7B6B  (0000)              	endmap				 
+     159.  00:7B6B                      ; -------------------------------------------------------------
+     160.  00:7B6B                      
+     468   00:7B6B                      
+     469   00:7B6B                      		; --- ayFX REPLAYER v1.2f ---
+     470   00:7B6B                      
+     471   00:7B6B                      		; --- v1.2f  ayFX bank support
+     472   00:7B6B                      		; --- v1.11f If a frame volume is zero then no AYREGS update
+     473   00:7B6B                      		; --- v1.1f  Fixed volume for all ayFX streams
+     474   00:7B6B                      		; --- v1.1   Explicit priority (as suggested by AR)
+     475   00:7B6B                      		; --- v1.0f  Bug fixed (error when using noise)
+     476   00:7B6B                      		; --- v1.0   Initial release
+     477   00:7B6B                      
+     478   00:7B6B                      ayFX_SETUP:	
+     479   00:7B6B  21 98 7C            		ld		hl,sfxbank
+     480   00:7B6E                      		; ---          ayFX replayer setup          ---
+     481   00:7B6E                      		; --- INPUT: HL -> pointer to the ayFX bank ---
+     482   00:7B6E  22 7F F8            		ld	[ayFX_BANK],hl			; Current ayFX bank
+     483   00:7B71  3E 01               		ld	a,1				; Starting channel
+     484   00:7B73  32 88 F8            		ld	[ayFX_CHANNEL],a		; Updated
+     485   00:7B76                      ayFX_END:	; --- End of an ayFX stream ---
+     486   00:7B76  3E FF               		ld	a,255				; Lowest ayFX priority
+     487   00:7B78  32 81 F8            		ld	[ayFX_PRIORITY],a		; Priority saved (not playing ayFX stream)
+     488   00:7B7B                      		
+     489   00:7B7B                      	; 	set the ISR routine	
+     490   00:7B7B  3E F7               		ld      a,0xF7
+     491   00:7B7D  32 9A FD                    ld      ($FD9A),a
+     492   00:7B80  3A 48 F3            		ld		a,(slotvar)
+     493   00:7B83  32 9B FD            		ld		($FD9B),a
+     494   00:7B86  21 F2 7B                    ld      hl,ayFX_PLAY
+     495   00:7B89  22 9C FD                    ld      ($FD9C),hl
+     496   00:7B8C  3E C9                       ld      a,0xC9
+     497   00:7B8E  32 9E FD                    ld      ($FD9E),a
+     498   00:7B91                      		
+     499   00:7B91                      	; 	set the USR0() function 
+     500   00:7B91  21 09 FD            		ld		hl,USR0
+     501   00:7B94  22 9A F3            		ld		(0xF39A),hl
+     502   00:7B97                      
+     503   00:7B97  3E F7                       ld      a,0xF7
+     504   00:7B99  32 09 FD                    ld      (USR0+0),a
+     505   00:7B9C  3A 48 F3            		ld		a,(slotvar)
+     506   00:7B9F  32 0A FD            		ld		(USR0+1),a
+     507   00:7BA2  21 AE 7B                    ld      hl,ayFX_INIT
+     508   00:7BA5  22 0B FD                    ld      (USR0+2),hl
+     509   00:7BA8  3E C9                       ld      a,0xC9
+     510   00:7BAA  32 0D FD                    ld      (USR0+4),a
+     511   00:7BAD                      		
+     512   00:7BAD  C9                  		ret					; Return
+     513   00:7BAE                      
+     514   00:7BAE                      ayFX_INIT:	; ---     INIT A NEW ayFX STREAM     ---
+     515   00:7BAE  3A 63 F6            		ld		a,(0xF663)			; argument type passed to USR()
+     516   00:7BB1  FE 02               		cp		2
+     517   00:7BB3  C0                  		ret		nz					; not an integer
+     518   00:7BB4                      		
+     519   00:7BB4  3A F8 F7            		ld		a,(0xF7F8)			; sfx num. in A
+     520   00:7BB7  0E 00                       ld      c,0
+     521   00:7BB9                      
+     522   00:7BB9                      		; --- INPUT: A -> sound to be played ---
+     523   00:7BB9                      		; ---        C -> sound priority     ---
+     524   00:7BB9  C5                  		push	bc				; Store bc in stack
+     525   00:7BBA  D5                  		push	de				; Store de in stack
+     526   00:7BBB  E5                  		push	hl				; Store hl in stack
+     527   00:7BBC                      		; --- Check if the index is in the bank ---
+     528   00:7BBC  47                  		ld	b,a				; b:=a (new ayFX stream index)
+     529   00:7BBD  2A 7F F8            		ld	hl,[ayFX_BANK]			; Current ayFX BANK
+     530   00:7BC0  7E                  		ld	a,[hl]				; Number of samples in the bank
+     531   00:7BC1  B7                  		or	a				; If zero (means 256 samples)...
+     532   00:7BC2  CA CC 7B            		jp	z,_CHECK_PRI			; ...goto _CHECK_PRI
+     533   00:7BC5                      		; The bank has less than 256 samples
+     534   00:7BC5  78                  		ld	a,b				; a:=b (new ayFX stream index)
+     535   00:7BC6  BE                  		cp	[hl]				; If new index is not in the bank...
+     536   00:7BC7  3E 02               		ld	a,2				; a:=2 (error 2: Sample not in the bank)
+     537   00:7BC9  D2 EE 7B            		jp	nc,_INIT_END			; ...we can't init it
+     538   00:7BCC                      _CHECK_PRI:	; --- Check if the new priority is lower than the current one ---
+     539   00:7BCC                      		; ---   Remember: 0 = highest priority, 15 = lowest priority  ---
+     540   00:7BCC  78                  		ld	a,b				; a:=b (new ayFX stream index)
+     541   00:7BCD  3A 81 F8            		ld	a,[ayFX_PRIORITY]		; a:=Current ayFX stream priority
+     542   00:7BD0  B9                  		cp	c				; If new ayFX stream priority is lower than current one...
+     543   00:7BD1  3E 01               		ld	a,1				; a:=1 (error 1: A sample with higher priority is being played)
+     544   00:7BD3  DA EE 7B            		jp	c,_INIT_END			; ...we don't start the new ayFX stream
+     545   00:7BD6                      		; --- Set new priority ---
+     546   00:7BD6  79                  		ld	a,c				; a:=New priority
+     547   00:7BD7  E6 0F               		and	$0F				; We mask the priority
+     548   00:7BD9  32 81 F8            		ld	[ayFX_PRIORITY],a		; new ayFX stream priority saved in RAM
+     549   00:7BDC                      		; --- Calculate the pointer to the new ayFX stream ---
+     550   00:7BDC  ED 5B 7F F8         		ld	de,[ayFX_BANK]			; de:=Current ayFX bank
+     551   00:7BE0  13                  		inc	de				; de points to the increments table of the bank
+     552   00:7BE1  68                  		ld	l,b				; l:=b (new ayFX stream index)
+     553   00:7BE2  26 00               		ld	h,0				; hl:=b (new ayFX stream index)
+     554   00:7BE4  29                  		add	hl,hl				; hl:=hl*2
+     555   00:7BE5  19                  		add	hl,de				; hl:=hl+de (hl points to the correct increment)
+     556   00:7BE6  5E                  		ld	e,[hl]				; e:=lower byte of the increment
+     557   00:7BE7  23                  		inc	hl				; hl points to the higher byte of the correct increment
+     558   00:7BE8  56                  		ld	d,[hl]				; de:=increment
+     559   00:7BE9  19                  		add	hl,de				; hl:=hl+de (hl points to the new ayFX stream)
+     560   00:7BEA  22 82 F8            		ld	[ayFX_POINTER],hl		; Pointer saved in RAM
+     561   00:7BED  AF                  		xor	a				; a:=0 (no errors)
+     562   00:7BEE  E1                  _INIT_END:	pop	hl				; Retrieve hl from stack
+     563   00:7BEF  D1                  		pop	de				; Retrieve de from stack
+     564   00:7BF0  C1                  		pop	bc				; Retrieve bc from stack
+     565   00:7BF1  C9                  		ret					; Return
+     566   00:7BF2                      
+     567   00:7BF2                      ayFX_PLAY:
+     568   00:7BF2  CD BB 7E            		call	PT3_ROUT
+     569   00:7BF5                      
+     570   00:7BF5  21 91 F8                    LD        HL,AYREGS+8	
+     571   00:7BF8  AF                  		xor	a
+     572   00:7BF9  77                  		ld		(hl),a
+     573   00:7BFA  23                  		inc		hl
+     574   00:7BFB  77                  		ld		(hl),a
+     575   00:7BFC  23                  		inc		hl
+     576   00:7BFD  77                  		ld		(hl),a
+     577   00:7BFE                      
+     578   00:7BFE                      		; --- PLAY A FRAME OF AN ayFX STREAM ---
+     579   00:7BFE  3A 81 F8            		ld	a,[ayFX_PRIORITY]		; a:=Current ayFX stream priority
+     580   00:7C01  B7                  		or	a						; If priority has bit 7 on...
+     581   00:7C02  F8                  		ret	m						; ...return
+     582   00:7C03                      		; --- Extract control byte from stream ---
+     583   00:7C03  2A 82 F8            		ld	hl,[ayFX_POINTER]		; Pointer to the current ayFX stream
+     584   00:7C06  4E                  		ld	c,[hl]					; c:=Control byte
+     585   00:7C07  23                  		inc	hl						; Increment pointer
+     586   00:7C08                      		; --- Check if there's new tone on stream ---
+     587   00:7C08  CB 69               		bit	5,c						; If bit 5 c is off...
+     588   00:7C0A  CA 15 7C            		jp	z,_CHECK_NN				; ...jump to _CHECK_NN (no new tone)
+     589   00:7C0D                      		; --- Extract new tone from stream ---
+     590   00:7C0D  5E                  		ld	e,[hl]					; e:=lower byte of new tone
+     591   00:7C0E  23                  		inc	hl						; Increment pointer
+     592   00:7C0F  56                  		ld	d,[hl]					; d:=higher byte of new tone
+     593   00:7C10  23                  		inc	hl						; Increment pointer
+     594   00:7C11  ED 53 84 F8         		ld	[ayFX_TONE],de			; ayFX tone updated
+     595   00:7C15                      _CHECK_NN:	; --- Check if there's new noise on stream ---
+     596   00:7C15  CB 71               		bit	6,c						; if bit 6 c is off...
+     597   00:7C17  CA 24 7C            		jp	z,_SETPOINTER			; ...jump to _SETPOINTER (no new noise)
+     598   00:7C1A                      		; --- Extract new noise from stream ---
+     599   00:7C1A  7E                  		ld	a,[hl]					; a:=New noise
+     600   00:7C1B  23                  		inc	hl						; Increment pointer
+     601   00:7C1C  FE 20               		cp	$20						; If it's an illegal value of noise (used to mark end of stream)...
+     602   00:7C1E  CA 76 7B            		jp	z,ayFX_END				; ...jump to ayFX_END
+     603   00:7C21  32 86 F8            		ld	[ayFX_NOISE],a			; ayFX noise updated
+     604   00:7C24                      _SETPOINTER:	; --- Update ayFX pointer ---
+     605   00:7C24  22 82 F8            		ld	[ayFX_POINTER],hl		; Update ayFX stream pointer
+     606   00:7C27                      		; --- Extract volume ---
+     607   00:7C27  79                  		ld	a,c						; a:=Control byte
+     608   00:7C28  E6 0F               		and	$0F						; lower nibble
+     609   00:7C2A  32 87 F8            		ld	[ayFX_VOLUME],a			; ayFX volume updated
+     610   00:7C2D  C8                  		ret	z						; Return if volume is zero (don't copy ayFX values in to AYREGS)
+     611   00:7C2E                      		; -------------------------------------
+     612   00:7C2E                      		; --- COPY ayFX VALUES IN TO AYREGS ---
+     613   00:7C2E                      		; -------------------------------------
+     614   00:7C2E                      		; --- Set noise channel ---
+     615   00:7C2E  CB 79               		bit	7,c						; If noise is off...
+     616   00:7C30  C2 39 7C            		jp	nz,_SETMASKS			; ...jump to _SETMASKS
+     617   00:7C33  3A 86 F8            		ld	a,[ayFX_NOISE]			; ayFX noise value
+     618   00:7C36  32 8F F8            		ld	[AYREGS+6],a			; copied in to AYREGS (noise channel)
+     619   00:7C39                      _SETMASKS:	; --- Set mixer masks ---
+     620   00:7C39  79                  		ld	a,c						; a:=Control byte
+     621   00:7C3A  E6 90               		and	$90						; Only bits 7 and 4 (noise and tone mask for psg reg 7)
+     622   00:7C3C  FE 90               		cp	$90						; If no noise and no tone...
+     623   00:7C3E  C8                  		ret	z						; ...return (don't copy ayFX values in to AYREGS)
+     624   00:7C3F                      		; --- Copy ayFX values in to ARYREGS ---
+     625   00:7C3F  CB 0F               		rrc	a						; Rotate a to the right (1 TIME)
+     626   00:7C41  CB 0F               		rrc	a						; Rotate a to the right (2 TIMES) (OR mask)
+     627   00:7C43  16 DB               		ld	d,$DB					; d:=Mask for psg mixer (AND mask)
+     628   00:7C45                      		; --- Calculate next ayFX channel ---
+     629   00:7C45  21 88 F8            		ld	hl,ayFX_CHANNEL			; Old ayFX playing channel
+     630   00:7C48  35                  		dec	[hl]					; New ayFX playing channel
+     631   00:7C49  C2 4E 7C            		jp	nz,_SETCHAN				; If not zero jump to _SETCHAN
+     632   00:7C4C  36 03               		ld	[hl],3					; If zero -> set channel 3
+     633   00:7C4E  46                  _SETCHAN:	ld	b,[hl]				; Channel counter
+     634   00:7C4F                      _CHK1:		; --- Check if playing channel was 1 ---
+     635   00:7C4F  10 10               		djnz	_CHK2				; Decrement and jump if channel was not 1
+     636   00:7C51                      _PLAY_C:	; --- Play ayFX stream on channel C ---
+     637   00:7C51  CD 8B 7C            		call	_SETMIXER			; Set PSG mixer value (a:=ayFX volume)
+     638   00:7C54  32 93 F8            		ld	[AYREGS+10],a			; Volume copied in to AYREGS (channel C volume)
+     639   00:7C57  CB 51               		bit	2,c						; If tone is off...
+     640   00:7C59  C0                  		ret	nz						; ...return
+     641   00:7C5A  2A 84 F8            		ld	hl,[ayFX_TONE]			; ayFX tone value
+     642   00:7C5D  22 8D F8            		ld	[AYREGS+4],hl			; copied in to AYREGS (channel C tone)
+     643   00:7C60  C9                  		ret							; Return
+     644   00:7C61                      _CHK2:		; --- Check if playing channel was 2 ---
+     645   00:7C61  CB 0A               		rrc	d						; Rotate right AND mask
+     646   00:7C63  CB 0F               		rrc	a						; Rotate right OR mask
+     647   00:7C65  10 10               		djnz	_CHK3				; Decrement and jump if channel was not 2
+     648   00:7C67                      _PLAY_B:	; --- Play ayFX stream on channel B ---
+     649   00:7C67  CD 8B 7C            		call	_SETMIXER			; Set PSG mixer value (a:=ayFX volume)
+     650   00:7C6A  32 92 F8            		ld	[AYREGS+9],a			; Volume copied in to AYREGS (channel B volume)
+     651   00:7C6D  CB 49               		bit	1,c						; If tone is off...
+     652   00:7C6F  C0                  		ret	nz						; ...return
+     653   00:7C70  2A 84 F8            		ld	hl,[ayFX_TONE]			; ayFX tone value
+     654   00:7C73  22 8B F8            		ld	[AYREGS+2],hl			; copied in to AYREGS (channel B tone)
+     655   00:7C76  C9                  		ret							; Return
+     656   00:7C77                      _CHK3:		; --- Check if playing channel was 3 ---
+     657   00:7C77  CB 0A               		rrc	d						; Rotate right AND mask
+     658   00:7C79  CB 0F               		rrc	a						; Rotate right OR mask
+     659   00:7C7B                      _PLAY_A:	; --- Play ayFX stream on channel A ---
+     660   00:7C7B  CD 8B 7C            		call	_SETMIXER			; Set PSG mixer value (a:=ayFX volume)
+     661   00:7C7E  32 91 F8            		ld	[AYREGS+8],a			; Volume copied in to AYREGS (channel A volume)
+     662   00:7C81  CB 41               		bit	0,c						; If tone is off...
+     663   00:7C83  C0                  		ret	nz						; ...return
+     664   00:7C84  2A 84 F8            		ld	hl,[ayFX_TONE]			; ayFX tone value
+     665   00:7C87  22 89 F8            		ld	[AYREGS+0],hl			; copied in to AYREGS (channel A tone)
+     666   00:7C8A  C9                  		ret							; Return
+     667   00:7C8B                      _SETMIXER:	; --- Set PSG mixer value ---
+     668   00:7C8B  4F                  		ld	c,a						; c:=OR mask
+     669   00:7C8C  3A 90 F8            		ld	a,[AYREGS+7]			; a:=PSG mixer value
+     670   00:7C8F  A2                  		and	d						; AND mask
+     671   00:7C90  B1                  		or	c						; OR mask
+     672   00:7C91  32 90 F8            		ld	[AYREGS+7],a			; PSG mixer value updated
+     673   00:7C94  3A 87 F8            		ld	a,[ayFX_VOLUME]			; a:=ayFX volume value
+     674   00:7C97  C9                  		ret							; Return
+     675   00:7C98                      sfxbank:		
+     676   00:7C98  (0223)              		incbin "ayFX-replayer\LOMPSG.afb"
+     677   00:7EBB                      PT3_ROUT:
+     678   00:7EBB  AF                          XOR A
+     679   00:7EBC                              
+     680   00:7EBC  21 90 F8                    LD        HL,AYREGS+7
+     681   00:7EBF  CB FE                       set        7,(hl)        ; --- FIXES BITS 6 AND 7 OF MIXER ---
+     682   00:7EC1  CB B6                       res        6,(hl)        ; --- FIXES BITS 6 AND 7 OF MIXER ---
+     683   00:7EC3                      
+     684   00:7EC3  0E A0                       LD C,0xA0
+     685   00:7EC5  21 89 F8                    LD HL,AYREGS
+     686   00:7EC8                      _LOUT:
+     687   00:7EC8  ED 79                       OUT (C),A
+     688   00:7ECA  0C                          INC C
+     689   00:7ECB  ED A3                       OUTI
+     690   00:7ECD  0D                          DEC C
+     691   00:7ECE  3C                          INC A
+     692   00:7ECF  FE 0D                       CP 13
+     693   00:7ED1  20 F5                       JR NZ,_LOUT
+     694   00:7ED3  ED 79                       OUT (C),A
+     695   00:7ED5  7E                          LD A,(HL)
+     696   00:7ED6  A7                          AND A
+     697   00:7ED7  F8                          RET M
+     698   00:7ED8  0C                          INC C
+     699   00:7ED9  ED 79                       OUT (C),A
+     700   00:7EDB  C9                          RET
+     701   00:7EDC                      		
+     702   00:7EDC  65 6E 64            		db	"end"
+     703   00:7EDF                      ;-------------------------------------
+     704   00:7EDF                      ; Padding for rom player
+     705   00:7EDF                      ;-------------------------------------
+     706   00:7EDF                              ; ds	$8000 - $
+     707   00:7EDF                      
+     708   00:7EDF                              org 	068000h
+     709   00!8000                      		CODE ! 	068000h
+     710   00!8000                      
+     711   00!8000                      ;-------------------------------------
+     712   00!8000                      ; Sample data
+     713   00!8000                      ;-------------------------------------
+     714   00!8000                      SAMPLE_START:
+     715   00!8000                               include DataTable.asm
+       1.  00!8000                      s0_START:
+       2.  00!8000  (2580)                       incbin data0.bin 
+       3.  00!A580                      s0_END:
+       4.  00!A580                      s1_START:
+       5.  00!A580  (1E00)                       incbin data1.bin 
+       6.  00!C380                      s1_END:
+       7.  00!C380                      s2_START:
+       8.  00!C380  (0360)                       incbin data2.bin 
+       9.  00!C6E0                      s2_END:
+      10.  00!C6E0                      s3_START:
+      11.  00!C6E0  (2400)                       incbin data3.bin 
+      12.  00!EAE0                      s3_END:
+      13.  00!EAE0                      s4_START:
+      14.  00!EAE0  (0120)                       incbin data4.bin 
+      15.  00!EC00                      s4_END:
+      16.  00!EC00                      s5_START:
+      17.  00!EC00  (05A0)                       incbin data5.bin 
+      18.  00!F1A0                      s5_END:
+      19.  00!F1A0                      s6_START:
+      20.  00!F1A0  (17A0)                       incbin data6.bin 
+      21.  00!0940                      s6_END:
+      22.  00!0940                      s7_START:
+      23.  00!0940  (3360)                       incbin data7.bin 
+      24.  00!3CA0                      s7_END:
+      25.  00!3CA0                      s8_START:
+      26.  00!3CA0  (6B40)                       incbin data8.bin 
+      27.  00!A7E0                      s8_END:
+     716   00!A7E0                      		 
+     717   00!A7E0                      SAMPLE_END:
+     718   00!A7E0                      		org 	004800h
+     719   00:4800                      		CODE ! 	07A800h		
+     720   00!A800  69 6D 61 67 65      		db "image"
+     721   00!A805                      easter_egg:
+     722   00!A805  3E 05               		ld		a,5
+     723   00!A807  CD 5F 00            		call	05fh
+     724   00!A80A                      		
+     725   00!A80A                      
+     726   00!A80A  21 4D 48            		ld	hl,04000h + (palette & 01FFFH)
+     727   00!A80D                      
+     728   00!A80D                      		;Set the palette to the one HL points to...
+     729   00!A80D                      		;Modifies: AF, BC, HL (=updated)
+     730   00!A80D                      		;Enables the interrupts.
+     731   00!A80D                      		
+     732   00!A80D  AF                  		xor	a		;Set p#pointer to zero.
+     733   00!A80E  F3                  		di
+     734   00!A80F  D3 99               		out	(#99),a
+     735   00!A811  3E 90               		ld	a,16+128
+     736   00!A813  FB                  		ei
+     737   00!A814  D3 99               		out	(#99),a
+     738   00!A816  01 9A 20            		ld	bc,#209A	;out 32x to port #9A
+     739   00!A819  ED B3               		otir
+     740   00!A81B                      		
+     741   00!A81B  F3                  		di		
+     742   00!A81C  AF                  		xor	a
+     743   00!A81D  D3 99               		out	(0x99),a
+     744   00!A81F  3E 8E               		ld	a,08Eh
+     745   00!A821  D3 99               		out	(0x99),a
+     746   00!A823  AF                  		xor	a
+     747   00!A824  D3 99               		out	(0x99),a
+     748   00!A826  3E 40               		ld	a,040h
+     749   00!A828  D3 99               		out	(0x99),a
+     750   00!A82A                      
+     751   00!A82A                      		
+     752   00!A82A  1E 3B               		ld		e, easter_egg/02000h-2 
+     753   00!A82C  16 06               		ld		d,6
+     754   00!A82E                      2:		
+     755   00!A82E  1C                  		inc		e
+     756   00!A82F  7B                  		ld		a,e
+     757   00!A830  32 00 70            		ld 		(Bank2),a
+     758   00!A833                      
+     759   00!A833  21 00 60            		ld		hl,6000h
+     760   00!A836  01 98 00            		ld		bc,0098h
+     761   00!A839  3E 20               		ld		a,32
+     762   00!A83B  ED B3               1:		otir
+     763   00!A83D  3D                  		dec	a
+     764   00!A83E  20 FB               		jr	nz,1B
+     765   00!A840                      		
+     766   00!A840  15                  		dec	d
+     767   00!A841  20 EB               		jr	nz,2B
+     768   00!A843                      
+     769   00!A843  3E 01               		ld		a,1
+     770   00!A845  32 00 70            		ld 		(Bank2),a
+     771   00!A848  2E 08               		ld		l,8
+     772   00!A84A  C3 54 78            		jp		ReplayerInit_2
+     773   00!A84D                      		
+     774   00!A84D                      
+     775   00!A84D                      
+     776   00!A84D                      palette:
+     777   00!A84D                      
+     778   00!A84D  (0020)              	incbin "kaispoon\spoon.pl5",7
+     779   00!A86D                      	
+     780   00!A86D                      		CODE ! 	07C000h
+     781   00!C000                      
+     782   00!C000                      		
+     783   00!C000                      spoon:		
+     784   00!C000  (6A00)              	incbin "kaispoon\spoon.sc5",7
+     785   00!2A00                      ;-------------------------------------
+     786   00!2A00                      ; Padding, align rom image to a power of two.
+     787   00!2A00                      ;-------------------------------------
+     788   00!2A00                      
+     789   00!2A00  (00:127E0)          SAMPLE_LENGTH:  equ SAMPLE_END - SAMPLE_START
+     790   00!2A00                      
+     791   00!2A00  00 (5632)           		DS (84000h - $)
+     792   00!4000                      
+     793   00!4000                      
+     794   00!4000                              ; IF (SAMPLE_LENGTH <= 6000h)
+     795   00!4000                              ; DS (06000h - SAMPLE_LENGTH)
+     796   00!4000                              ; ELSE
+     797   00!4000                              ; IF (SAMPLE_LENGTH <= 10000h-2000h)
+     798   00!4000                              ; DS (0E000h - SAMPLE_LENGTH)
+     799   00!4000                              ; ELSE
+     800   00!4000                              ; IF (SAMPLE_LENGTH <= 1E000h)
+     801   00!4000                              ; DS (01E000h - SAMPLE_LENGTH)
+     802   00!4000                              ; ELSE
+     803   00!4000                              ; IF (SAMPLE_LENGTH <= 3E000h)
+     804   00!4000                              ; DS (03E000h - SAMPLE_LENGTH)
+     805   00!4000                              ; ELSE
+     806   00!4000                              ; IF (SAMPLE_LENGTH <= 7E000h)
+     807   00!4000                              ; DS (07E000h - SAMPLE_LENGTH)
+     808   00!4000                              ; ELSE
+     809   00!4000                              ; DS (0FE000h - SAMPLE_LENGTH)
+     810   00!4000                              ; ENDIF
+     811   00!4000                              ; ENDIF
+     812   00!4000                              ; ENDIF
+     813   00!4000                              ; ENDIF
+     814   00!4000                              ; ENDIF
+     815   00!4000                      
+     816   00!4000                      
+     817   00!4000                      
+     818   00!4000                      FINISH:
+     819   00!4000                      
+     820   00!4000                      
+     821   00!4000                      ;---------------------------------------------------------
+     822   00!4000                      ; Variables
+     823   00!4000                      ;---------------------------------------------------------
+     824   00!4000  (FD09)              					map 0xFD09		; unused ram (145 bytes)
+     825   00!4000  (00:FD09)           USR0:				#	5
+     826   00!4000                      
+     827   00!4000  (00:FD0E)           SCC:            	#	1
+     828   00!4000  (00:FD0F)           curslot:            #	1
+     829   00!4000                      ; sccslots:           #	1
+     830   00!4000                      ; sccsubslots:		#	1
+     831   00!4000                      
+     832   00!4000  (00:FD10)           SccSfxOn:           #	1
+     833   00!4000                      
+     834   00!4000  (00:FD11)           SamplePos:          #	2
+     835   00!4000  (00:FD13)           Period:             #	2
+     836   00!4000  (00:FD15)           NumBlocksToPlay:    #	2
+     837   00!4000  (00:FD17)           SamplePage:         #	1
+     838   00!4000  (0000)              					endmap
+     839   00!4000                      					
+     840   00!4000                      ;	F87FH FNKSTR: DEFS 160		used by "key" statment
+     841   00!4000  (F87F)              					map 0xF87F		; unused ram (160 bytes)					
+     842   00!4000                      		; --- ayFX REPLAYER v1.2f ---
+     843   00!4000  (00:F87F)           ayFX_BANK:			#	2			; Current ayFX Bank
+     844   00!4000  (00:F881)           ayFX_PRIORITY:		#	1			; Current ayFX stream priotity
+     845   00!4000  (00:F882)           ayFX_POINTER:		#	2			; Pointer to the current ayFX stream
+     846   00!4000  (00:F884)           ayFX_TONE:			#	2			; Current tone of the ayFX stream
+     847   00!4000  (00:F886)           ayFX_NOISE:			#	1			; Current noise of the ayFX stream
+     848   00!4000  (00:F887)           ayFX_VOLUME:		#	1			; Current volume of the ayFX stream
+     849   00!4000  (00:F888)           ayFX_CHANNEL:		#	1			; PSG channel to play the ayFX stream
+     850   00!4000  (00:F889)           AYREGS:				#	14			; Ram copy of PSG registers
+     851   00!4000                      
+     852   00!4000  (0000)              					endmap
+     853   00!4000                      					
+
+    LABELS
+-------------------------------------------------
+00:0000F348   slotvar
+00:00004000 X loader60
+00:0000D000   loader60.start
+00:0000D013   loader60.end
+00:00004000 X loader50
+00:0000D000   loader50.start
+00:0000D013   loader50.end
+00:00005000   Bank1
+00:00007000   Bank2
+00:00009000 X Bank3
+00:0000B000 X Bank4
+00:00009000   sccBank3
+00:000008BC   Period50
+00:00000749   Period60
+00:000077B5   START60H
+00:000077BA   START50H
+00:000077F0   START
+00:000000A8 X i8255porta
+00:000000A9   i8255portb
+00:000000AA   i8255portc
+00:000000AB X i8255portd
+00:00007849   checkkbd
+00:00007854   ReplayerInit_2
+00:0000785E   ReplayerInit
+00:0000788C   SfxTable
+00:00000009 X nwavs
+00:000078B9   ReplayerUpdate60H
+00:000078D4   SccReplayerUpdate
+00:000079F7   ReplayerMute
+00:000079FF   ReplayerUpdate50H
+00:00007A1A   SccReplayerUpdate50H
+00:00007A58   my_ldir746
+00:00007A8C   SccInit
+00:00007AAB X SccMute
+00:00007AB9   SCCsearch
+00:00007ACC   en_scc
+00:00007AE8   en_slot
+00:00000024   enaslt
+00:0000FCC1   exptbl
+00:0000FCC5   slttbl
+00:00007AEE   begin
+00:00007B0D   scctest
+00:00007B11   testslot
+00:00007B26   testreg
+00:00007B3D   nextslot
+00:00007B4D   nextprim
+00:00007B5F   noscc
+00:00007B61   done
+00:00007B6B   end
+00:00007B6B   ayFX_SETUP
+00:00007B76   ayFX_END
+00:00007BAE   ayFX_INIT
+00:00007BCC   _CHECK_PRI
+00:00007BEE   _INIT_END
+00:00007BF2   ayFX_PLAY
+00:00007C15   _CHECK_NN
+00:00007C24   _SETPOINTER
+00:00007C39   _SETMASKS
+00:00007C4E   _SETCHAN
+00:00007C4F X _CHK1
+00:00007C51 X _PLAY_C
+00:00007C61   _CHK2
+00:00007C67 X _PLAY_B
+00:00007C77   _CHK3
+00:00007C7B X _PLAY_A
+00:00007C8B   _SETMIXER
+00:00007C98   sfxbank
+00:00007EBB   PT3_ROUT
+00:00007EC8   _LOUT
+00:00068000   SAMPLE_START
+00:00068000   s0_START
+00:0006A580   s0_END
+00:0006A580   s1_START
+00:0006C380   s1_END
+00:0006C380   s2_START
+00:0006C6E0   s2_END
+00:0006C6E0   s3_START
+00:0006EAE0   s3_END
+00:0006EAE0   s4_START
+00:0006EC00   s4_END
+00:0006EC00   s5_START
+00:0006F1A0   s5_END
+00:0006F1A0   s6_START
+00:00070940   s6_END
+00:00070940   s7_START
+00:00073CA0   s7_END
+00:00073CA0   s8_START
+00:0007A7E0   s8_END
+00:0007A7E0   SAMPLE_END
+00:0007A805   easter_egg
+00:0007A84D   palette
+00:0007C000 X spoon
+00:000127E0 X SAMPLE_LENGTH
+00:00084000 X FINISH
+00:0000FD09   USR0
+00:0000FD0E   SCC
+00:0000FD0F   curslot
+00:0000FD10   SccSfxOn
+00:0000FD11   SamplePos
+00:0000FD13   Period
+00:0000FD15   NumBlocksToPlay
+00:0000FD17   SamplePage
+00:0000F87F   ayFX_BANK
+00:0000F881   ayFX_PRIORITY
+00:0000F882   ayFX_POINTER
+00:0000F884   ayFX_TONE
+00:0000F886   ayFX_NOISE
+00:0000F887   ayFX_VOLUME
+00:0000F888   ayFX_CHANNEL
+00:0000F889   AYREGS
+
+
+ Output: SccReplayer3c_d2r.out
+-------------------------------------------------
+
+ Page: 00
+  Org: 00004000  Size: *  Used: 00000000
+
+    No output
+
+ Output: dsks\loader60.bin
+-------------------------------------------------
+
+ Page: 00
+  Org: 00004000  Size: *  Used: 0000001A
+
+   Address   Length Align   Label
+   00004000      26         loader60
+
+ Output: dsks\loader50.bin
+-------------------------------------------------
+
+ Page: 00
+  Org: 00004000  Size: *  Used: 0000001A
+
+   Address   Length Align   Label
+   00004000      26         loader50
+
+ Output: sccplay3c_d2r.rom
+-------------------------------------------------
+
+ Page: 00
+  Org: 00004000  Size: *  Used: 00080000
+
+   Address   Length Align   Label
+   00004000  403553     @   
+
+  Overlay parts:
+   Address   Length Align  Label
+   000077B5    1834     @  START60H
+   00068000   75744     @  SAMPLE_START
+   0007A800     109     @  easter_egg
+   0007C000   32768     @  spoon
