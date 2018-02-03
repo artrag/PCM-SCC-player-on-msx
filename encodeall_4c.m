@@ -27,9 +27,9 @@ for i=1:nfiles
             gain  = gain - gstep;
         end
 
-        su  = scc_int8(gain + gstep,['wav\' x(i).name],i-1);        close all
-        sd  = scc_int8(gain - gstep,['wav\' x(i).name],i-1);        close all
-        snr = scc_int8(gain        ,['wav\' x(i).name],i-1);        close all
+        su  = scc_int8_4c(gain + gstep,['wav\' x(i).name],i-1);        close all
+        sd  = scc_int8_4c(gain - gstep,['wav\' x(i).name],i-1);        close all
+        snr = scc_int8_4c(gain        ,['wav\' x(i).name],i-1);        close all
 
         gain
         snr
@@ -43,7 +43,7 @@ end
 gain = 2*mean(gains);
 for i=1:nfiles
     disp (x(i).name);
-    snr_new(i) = scc_int8(gain,['wav\' x(i).name],i-1);
+    snr_new(i) = scc_int8_4c(gain,['wav\' x(i).name],i-1);
     close all    
 end
 

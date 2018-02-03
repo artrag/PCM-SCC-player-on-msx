@@ -1,9 +1,9 @@
-function [out] = scc_int8(in,name,num)
+function [out] = scc_int8_4c(in,name,num)
 
 Fr = 60/1.001;
 fc = ((455/2) * (525/2) * (60/1.001));
 
-[Y,Fs,NBITS,OPTS] = wavread(name);
+[Y,Fs] = audioread(name);
 
 Frs = fix(4*32*Fr);
 G = gcd(Fs,Frs);
@@ -19,9 +19,8 @@ end
 
 Y = resample(Y,P,Q);
 Y = 2.0*Y/(max(Y)-min(Y));
-Y = Y - (max(Y)+min(Y))/2;
-
-%wavwrite(Y,Frs,16,'tst_7.6KHz.wav');
+Y = Y - (max(Y)-1);
+audiowrite(['temp_' name(1:(end-4)) '_tst_7.6KHz.wav'],Y,Frs,'BitsPerSample',24);
 
 Y = Y*in*127;
 l = size(Y,1);
@@ -47,22 +46,14 @@ ch4 = int8(zeros(size(ph4)));
 [ch2(1),err] = clamp_int8(double(ph2(1)) - double(ch1(1))                                   + err);
 [ch3(1),err] = clamp_int8(double(ph3(1)) - double(ch1(1)) - double(ch2(1))                  + err);
 [ch4(1),err] = clamp_int8(double(ph4(1)) - double(ch1(1)) - double(ch2(1)) - double(ch3(1)) + err);
-%ch4(1) = ch4(1)*0;
 
 for i=2:size(Y)/4
     [ch1(i),err] = clamp_int8(double(ph1(i))-double(ch2(i-1))-double(ch3(i-1))-double(ch4(i-1)) + err);
     [ch2(i),err] = clamp_int8(double(ph2(i))-double(ch1(i))  -double(ch3(i-1))-double(ch4(i-1)) + err);
     [ch3(i),err] = clamp_int8(double(ph3(i))-double(ch1(i))  -double(ch2(i))  -double(ch4(i-1)) + err);
     [ch4(i),err] = clamp_int8(double(ph4(i))-double(ch1(i))  -double(ch2(i))  -double(ch3(i))   + err);
-%    ch4(i) = ch4(i)*0;    
 end
 
-% nfad = 4;
-% fad = [1:-1/nfad:0]';
-% ch1(end-nfad:end) = double(ch1(end-nfad:end)).*fad;
-% ch2(end-nfad:end) = double(ch2(end-nfad:end)).*fad;
-% ch3(end-nfad:end) = double(ch3(end-nfad:end)).*fad;
-% ch4(end-nfad:end) = double(ch4(end-nfad:end)).*fad;
 
 figure
 t = 1:size(ch1,1);
@@ -89,21 +80,6 @@ out = convert2db(sqrt(norm(Y)/norm((Z-Y))));
 disp(['snr (db)= ', num2str(out)]);
 disp(['Max err= ', num2str(max(abs(double(Z-Y)/256)))]);
 
-% 
-% 
-% for i=1:32:(size(ch1,1)-32)
-%     for j=1:32
-%         dst(4*(i-1) +  0 + j) = int8( double(ch1(i-1+j))/256 );
-%         dst(4*(i-1) + 32 + j) = int8( double(ch2(i-1+j))/256 );
-%         dst(4*(i-1) + 64 + j) = int8( double(ch3(i-1+j))/256 );
-%         dst(4*(i-1) + 96 + j) = int8( double(ch4(i-1+j))/256 );
-%     end
-% end
-% 
-% 
-% fid = fopen('data.bin','wb');
-% fwrite(fid,dst,'int8');
-% fclose(fid);
 
 c1 = double(ch1);
 c2 = double(ch2);
