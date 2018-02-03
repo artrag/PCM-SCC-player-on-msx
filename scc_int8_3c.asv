@@ -22,7 +22,10 @@ end
 
 Y = resample(Y,P,Q);
 Y = 2.0*Y/(max(Y)-min(Y));
-Y = Y - (max(Y)-1);
+
+Y = T - max(Y)
+[min(Y) max(Y) ]
+
 audiowrite(['temp_' name(1:(end-4)) '_tst_5.7KHz.wav'],Y,Frs,'BitsPerSample',24);
 
 Y = Y*gain*127;
@@ -101,8 +104,8 @@ fclose(fid);
 ft = Fr*32;
 P = fix(fc/ft-1);
 
-% disp(['Ideal period of the SCC waves (hex) ',dec2hex(P) ]);
-% disp(['Offset in cycles among channels ',num2str(fc/(Frs))]);
+disp(['Ideal period of the SCC waves (hex) ',dec2hex(P) ]);
+disp(['Offset in cycles among channels ',num2str(fc/(Frs))]);
 
 %fname = [ 'data' num2str(num) '.mat'];
 %save(fname);

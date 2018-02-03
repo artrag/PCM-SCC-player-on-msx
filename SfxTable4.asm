@@ -1,4 +1,4 @@
-nwavs:       equ  9
+nwavs:       equ  12
 
          dw     04000h + (s0_START & 01FFFH)
          db     s0_START/02000h-2
@@ -35,4 +35,16 @@ nwavs:       equ  9
          dw     04000h + (s8_START & 01FFFH)
          db     s8_START/02000h-2
          dw     (s8_END - s8_START+95)/96
+    
+         dw     04000h + (s9_START & 01FFFH)
+         db     s9_START/02000h-2
+         dw     (s9_END - s9_START+95)/96
+    
+         dw     04000h + (s10_START & 01FFFH)
+         db     s10_START/02000h-2
+         dw     (s10_END - s10_START+95)/96
+    
+         dw     04000h + (s11_START & 01FFFH)
+         db     s11_START/02000h-2
+         dw     (s11_END - s11_START+95)/96
     

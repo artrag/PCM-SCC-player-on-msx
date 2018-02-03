@@ -25,3 +25,12 @@ s7_END:
 s8_START:
          incbin data8.bin 
 s8_END:
+s9_START:
+         incbin data9.bin 
+s9_END:
+s10_START:
+         incbin data10.bin 
+s10_END:
+s11_START:
+         incbin data11.bin 
+s11_END:
