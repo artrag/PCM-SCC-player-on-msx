@@ -42,16 +42,16 @@ ch2 = int8(zeros(size(ph2)));
 ch3 = int8(zeros(size(ph3)));
 ch4 = int8(zeros(size(ph4)));
 
-[ch1(1),err] = clamp_int8(double(ph1(1))                                                         );
-[ch2(1),err] = clamp_int8(double(ph2(1)) - double(ch1(1))                                   + err);
-[ch3(1),err] = clamp_int8(double(ph3(1)) - double(ch1(1)) - double(ch2(1))                  + err);
-[ch4(1),err] = clamp_int8(double(ph4(1)) - double(ch1(1)) - double(ch2(1)) - double(ch3(1)) + err);
+[ch1(1),err] = clamp_int8(ph1(1)                                 );
+[ch2(1),err] = clamp_int8(ph2(1) - ch1(1)                   + err);
+[ch3(1),err] = clamp_int8(ph3(1) - ch1(1) - ch2(1)          + err);
+[ch4(1),err] = clamp_int8(ph4(1) - ch1(1) - ch2(1) - ch3(1) + err);
 
 for i=2:size(Y)/4
-    [ch1(i),err] = clamp_int8(double(ph1(i))-double(ch2(i-1))-double(ch3(i-1))-double(ch4(i-1)) + err);
-    [ch2(i),err] = clamp_int8(double(ph2(i))-double(ch1(i))  -double(ch3(i-1))-double(ch4(i-1)) + err);
-    [ch3(i),err] = clamp_int8(double(ph3(i))-double(ch1(i))  -double(ch2(i))  -double(ch4(i-1)) + err);
-    [ch4(i),err] = clamp_int8(double(ph4(i))-double(ch1(i))  -double(ch2(i))  -double(ch3(i))   + err);
+    [ch1(i),err] = clamp_int8(ph1(i)-ch2(i-1)-ch3(i-1)-ch4(i-1) + err);
+    [ch2(i),err] = clamp_int8(ph2(i)-ch1(i)  -ch3(i-1)-ch4(i-1) + err);
+    [ch3(i),err] = clamp_int8(ph3(i)-ch1(i)  -ch2(i)  -ch4(i-1) + err);
+    [ch4(i),err] = clamp_int8(ph4(i)-ch1(i)  -ch2(i)  -ch3(i)   + err);
 end
 
 
