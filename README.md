@@ -23,8 +23,7 @@ A game supporting SCC and SCC+ (3 and 4 channels) should store twice the data (4
 
 
 # How to encode wav files
-
-Copy your .wav files in the subdirectyoty /wav
+Clone on your disk the whole repository and copy your .wav files in the subdirectyoty /wav
 Run from Matlab the script encodeall_3c.m for 3 channels or encodeall_4c.m for 4 channels
 
 The script will encode each wav file in a .bin file stored in the subdirectory /bin
